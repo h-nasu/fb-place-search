@@ -1,0 +1,198 @@
+
+<form role="form" class="form-top">
+<div class="row clearfix">
+  <div class="col-md-3 column">
+    
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <a class="panel-title" href="" ng-init="isCollapsed1=false" ng-click="isCollapsed1 = !isCollapsed1">
+          Keyword
+        </a>
+      </div>
+      <div class="panel-collapse collapse" collapse="isCollapsed1">
+        <div class="panel-body">
+          <alert ng-repeat="alert in $root.alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+          <div class="form-group">
+            <label for="search keyword">Search Keyword</label>
+            <input ng-model="$root.query" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label for="page limit">Page Limit</label>
+            <input ng-model="$root.queryLimit" class="form-control" />
+          </div>
+          <button ng-click="$root.search()" class="btn btn-primary">Search</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 column">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <a class="panel-title" href="" ng-init="isCollapsed2=false" ng-click="isCollapsed2 = !isCollapsed2">
+          Location Origin
+        </a>
+      </div>
+      <div class="panel-collapse collapse" collapse="isCollapsed2">
+        <div class="panel-body">
+          <div class="form-group">
+            <label for="category">Country</label>
+            <select ng-model="$root.selCountry" ng-options="country.CountryName+', '+country.CapitalName for country in countries" ng-change="$root.countryUpdate()" class="form-control" ></select>
+          </div>
+          <div class="form-group">
+            <label for="distance">Distance(meters)</label>
+            <input ng-model="$root.queryDistance" class="form-control" />
+          </div>
+          <button ng-click="$root.search()" class="btn btn-primary">Search</button>
+          <button ng-click="$root.geoLoc()" class="btn btn-info">My Location</button>
+          <div ng-if="$root.geoResult">
+            {{$root.geoResult}}
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+  <div class="col-md-3 column">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <a class="panel-title" href="" ng-init="isCollapsed3=false" ng-click="isCollapsed3 = !isCollapsed3">
+          Filter Search Result List
+        </a>
+      </div>
+      <div class="panel-collapse collapse" collapse="isCollapsed3">
+        <div class="panel-body">
+          <div class="form-group">
+              <label for="category">Category</label>
+              <div ng-if="searchLoadFlg">
+                <select ng-model="cat.flCategory" ng-options="category for category in categories" class="form-control" ></select><br>
+              </div>
+          </div>
+          <div class="form-group" ng-init="predicate=''">
+            <label for="sort">Sort List By</label>
+            [ <a href="" ng-click="predicate=''">unsorted</a> ]<br>
+            <a href="" class="btn btn-default" ng-click="predicate = 'likes'; reverse=!reverse">
+              Likes
+            </a>
+            <a href="" class="btn btn-default" ng-click="predicate = 'checkins'; reverse=!reverse">
+              Checkins
+            </a>
+            <a href="" class="btn btn-default" ng-click="predicate = 'talking_about_count'; reverse=!reverse">
+              Talking
+            </a>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</form>
+
+<div class="row clearfix">
+    <div class="col-md-6 column">
+      <label for="latitude">Latitude</label>{{$root.queryLatitude}}<label for="longitude">Longitude</label>{{$root.queryLongitude}} <button if-ng="marker.myLocation" class="btn btn-info btn-sm" clip-copy="marker.myLocation" clip-click="copyMessage()">Copy Location Origin</button><br>
+      You can drag and drop origin icon to change the 'Location Origin'.
+      <div ng-if="makers.length || marker" class="animateLists" id="googleMap">
+        <ui-gmap-google-map center="map.center" zoom="map.zoom" draggable="true" options="options" bounds="map.bounds">
+        
+          <ui-gmap-marker icon="marker.icon" coords="marker.coords" options="marker.options" events="marker.events" idkey="marker.id" click="marker.onClick(true)">
+            <ui-gmap-window show="show">
+              <div>
+                <!--<a href="{{marker.myLocation}}" target="_blank">{{marker.myLocation}}</a><br>-->
+                <button class="btn btn-success btn-sm" onClick="angular.element('#placesList').scope().sendTo(false)">Send to Friend</button>
+              </div>
+            </ui-gmap-window>
+          </ui-gmap-marker>
+        
+          <ui-gmap-markers models="makers" coords="'self'" icon="'icon'" click="onClick(true)">
+            <ui-gmap-windows show="show">
+              <div ng-non-bindable>
+                <img src="{{cover}}" />
+                <dl>
+                  <dt>
+                    Name
+                  </dt>
+                  <dd>
+                    {{title}}
+                  </dd>
+                  <dd>
+                    <label for="like">Likes</label> {{likes}}
+                  </dd>
+                  <dd>
+                    
+                  </dd>
+                  <dd>
+                    <a class="btn btn-info btn-sm" href="{{link}}" target="_blank">
+                      Facebook
+                    </a>
+                    <button class="btn btn-success btn-sm" onClick="angular.element('#placesList').scope().sendTo('{{link}}')">Send to Friend</button>
+                  </dd>
+                </dl>
+              </div>
+            </ui-gmap-windows>
+          </ui-gmap-markers>
+        </ui-gmap-google-map>
+      
+      </div>
+  </div>
+    
+    <div class="col-md-6 column">
+      <div class="row">
+        <div class="col-xs-6">
+          <h3>Search Result List</h3>
+        </div>
+        <div class="col-xs-6">
+          <button type="button" class="btn btn-info" style="margin-top:15px" ng-click="loadMap(false)">Show All on Map</button>
+        </div>
+      </div>
+      <!--<div class="list-group" infinite-scroll="loadMore()" id="placesList" infinite-scroll-container="'#placesList'" infinite-scroll-distance="0">-->
+      <div class="list-group" id="placesList">
+        <!--<div class="list-group-item animateLists" ng-repeat="place in filteredPlaces = (listPlaces | filterCategory:cat.flCategory | orderBy:predicate:reverse)" on-start-render="ngRepeatStart" on-finish-render="ngRepeatFinished">-->
+        <div class="list-group-item animateLists" ng-repeat="place in filteredPlaces = (listPlaces | filterCategory:cat.flCategory | orderBy:predicate:reverse)" ng-class="{active:selected == place.id}" >
+          <a href="" ng-click="showMakerWindow(place.id)">
+            <h4 class="list-group-item-heading">
+              {{place.name}}
+            </h4>
+            <p class="list-group-item-text">
+              <label for="category">Category</label>
+              {{place.category}}
+              <label for="likes">Likes</label>
+              {{place.likes}}
+              <label for="checkins">Checkins</label>
+              {{place.checkins}}
+              <label for="talking">Talking</label>
+              {{place.talking_about_count}}
+            </p>
+          </a>
+          <span class="listImageR">
+            <div ng-init="picture = place.cover ? place.cover.picture : ''">
+              <img ng-if="picture" src="{{picture}}" height="45px" />
+            </div>
+          </span>
+        </div>
+      </div>
+      
+      <div ng-if="places.paging">
+        <a class="btn btn-info btn-sm" href="" ng-if="places.paging.previous" ng-click="search(places.paging.previous)">PREV</a>
+        <a class="btn btn-info btn-sm" href="" ng-if="places.paging.next" ng-click="search(places.paging.next)">NEXT</a>
+      </div>
+      <div ng-if="placeDetail" class="animateLists photoGallery">
+        <label for="Photo Gallery">Photo Gallery</label>
+        <ul id="placePhotos">
+          <li ng-if="placeDetail.cover" >
+            <a href="{{placeDetail.cover.source}}">
+              <img src="{{placeDetail.cover.picture}}" />
+            </a>
+          </li>
+          <li ng-repeat="photo in placeDetail.photos">
+            <a href="{{photo.fullImage}}">
+              <img src="{{photo.thumbnail}}" />
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+</div>
+
+
