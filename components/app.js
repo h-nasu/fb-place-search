@@ -155,7 +155,7 @@ function($rootScope, placeFactory, usSpinnerService, geolocation){
   
   window.fbAsyncInit = function() {
     FB.init({
-      appId      : '174312002590',
+      appId      : '1608774846056023',
       cookie     : true, 
       xfbml      : true, 
       version    : 'v2.3'
