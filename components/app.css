@@ -133,6 +133,14 @@ ul#placePhotos li img:hover {
   margin-top: 15px;
 }
 
+div.navbar-header {
+  width: 342px;
+}
+
+.fb-like {
+  margin-top: 15px;
+}
+
 @media only screen and (max-width: 700px) {
   #placesList {
     max-height: none;
@@ -140,4 +148,17 @@ ul#placePhotos li img:hover {
   .angular-google-map-container { 
     height: 350px; 
   }
+  
+  div.navbar-header {
+    width: 100%;
+  }
 }
+
+@media only screen and (max-width: 430px) {
+  .fb-like {
+    margin-top: 0px;
+    margin-left: 15px;
+    top: -9px;
+  }
+}
+
